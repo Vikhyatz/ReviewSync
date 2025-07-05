@@ -17,3 +17,6 @@ Thumbs.db
 .env
 /server/.env
 /client/.env
+
+# draw io files
+*.drawio
