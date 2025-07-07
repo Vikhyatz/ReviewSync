@@ -1,6 +1,7 @@
 const express = require("express")
 const User = require("../models/User")
-const passport = require('passport')
+const passport = require('passport');
+const isLoggedIn = require("../middleware/loggedIn");
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
@@ -28,15 +29,11 @@ router.get('/logout', (req, res) => {
     });
 });
 
-router.get("/me", isLoggedIn ,(req, res) => {
+router.get("/me", isLoggedIn,(req, res) => {
     console.log("this is the me route", req.user)
     res.json({ user: req.user })
 })
 
-// middleware to check if the user is logged in or not
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) next();
-    res.redirect('/');
-}
+
 
 module.exports = router;

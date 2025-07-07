@@ -5,11 +5,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
-import Layout from './pages/Layout';
 import NoPage from './pages/NoPage';
 import Dash2 from './pages/Dash2';
-import Logout from './pages/Logout';
 import Nav from './pages/Nav';
+import { Room } from './pages/Room';
 
 export default function App() {
 
@@ -23,10 +22,9 @@ export default function App() {
         </Route>
         
         <Route path='/' element={<Nav signedIn={true} />} >
-          {/* <Route path="/room/:id" element={<RoomPage />} /> */}
+          <Route path="/room/:id" element={<Room />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="dash2" element={<Dash2 />} />
-          <Route path="logout" element={<Logout />} />
           <Route path="*" element={<NoPage />} />
         </Route>
 

@@ -51,19 +51,13 @@ const Register = () => {
 
         <section className="text-gray-400 bg-gray-900 h-screen body-font">
             <ToastContainer />
-            <div className="container px-5 mx-auto flex w-full h-screen justify-center items-center">
+            <div className="container px-5 py-24 mx-auto flex flex-wrap items-center">
                 <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
                     <h1 className="title-font font-medium text-3xl text-white">Welcome Back to Your Code Review Hub</h1>
                     <p className="leading-relaxed mt-4">Continue collaborating, refining, and reviewing code — smarter and faster.</p>
                 </div>
                 <form onSubmit={handleSubmit((data) => handleLogin(data))} className="lg:w-2/6 md:w-1/2 bg-gray-800 bg-opacity-50 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
                     <h2 className="text-white text-lg font-medium title-font mb-5">Log In</h2>
-
-                    {/* <div className="relative mb-4">
-                        <label htmlFor="username" className="leading-7 text-sm text-gray-400">User Name</label>
-                        <input {...register("username")} type="text" id="username" name="username" className="w-full bg-gray-600 bg-opacity-20 focus:bg-transparent focus:ring-2 focus:ring-blue-900 rounded border border-gray-600 focus:border-blue-500 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
-                        <p className='text-red-500 text-sm'>{errors.username?.message}</p>
-                    </div> */}
 
                     <div className="relative mb-4">
                         <label htmlFor="email" className="leading-7 text-sm text-gray-400">Email</label>

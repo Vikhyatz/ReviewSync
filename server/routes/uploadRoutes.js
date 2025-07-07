@@ -4,6 +4,8 @@ const path = require('path');
 const multer = require('multer')
 const express = require("express");
 const Room = require("../models/Room");
+const isLoggedIn = require("../middleware/loggedIn");
+const User = require("../models/User");
 const router = express.Router();
 
 // const Room = require('./models/Room')
@@ -28,11 +30,13 @@ const upload = multer({ storage: storage })
 router.post("/", upload.single('file'), (req, res, next) => {
     if (!req.file) return res.status(400).send('No file uploaded');
 
-    // create room name
-    const roomName = uuidv4();
+    // create room id
+    const roomId = uuidv4();
 
-    
+    // get room name
+    const roomName = req.body.roomName
 
+    const userId = req.body.userId
 
     // extract the text from the file
     const file = req.file;
@@ -52,12 +56,33 @@ router.post("/", upload.single('file'), (req, res, next) => {
 
         // make a room name document, save the file text in the data
         const newRoom = new Room({
+            roomId: roomId,
             roomName: roomName,
             fileText: data,
-        })
+            hostUser: userId,
+            joinedUsers: [userId]
+        });
+        // newRoom.joinedUsers.push(anotherUserId);
         await newRoom.save()
-        // console.log(newRoom)
-        res.status(200).json({ created: newRoom})
+
+        // update the room in the user's document too
+        const updateUser = await User.findByIdAndUpdate(
+            userId,
+            { $push: { joinedRooms: newRoom._id } },
+            { new: true }
+        );
+
+
+        res.status(200).json({ created: newRoom })
+    });
+
+    // delete the file
+    fs.unlink(filePath, (err) => {
+        if (err) {
+            console.error('Error deleting file:', err);
+            return;
+        }
+        console.log('File deleted successfully');
     });
 
 

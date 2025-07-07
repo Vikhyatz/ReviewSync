@@ -7,6 +7,7 @@ const env = require('dotenv')
 
 const authRouter = require("./routes/authRoutes")
 const uploadRoutes = require("./routes/uploadRoutes")
+const roomRoutes = require("./routes/roomRoutes")
 
 const app = express()
 env.config()
@@ -28,6 +29,7 @@ connectDb();
 
 app.use("/api/auth", authRouter)
 app.use("/api/upload", uploadRoutes)
+app.use("/api/rooms", roomRoutes)
 
 
 const port = process.env.PORT
