@@ -12,6 +12,8 @@ import { Room } from './pages/Room';
 
 export default function App() {
 
+  const [roomData, setRoomData] = useState(null)
+
   return (
 
     <BrowserRouter>
@@ -21,8 +23,8 @@ export default function App() {
           <Route path="login" element={<Login />} />
         </Route>
         
-        <Route path='/' element={<Nav signedIn={true} />} >
-          <Route path="/room/:id" element={<Room />} />
+        <Route path='/' element={<Nav signedIn={true} roomData={roomData} />} >
+          <Route path="/room/:id" element={<Room setRoomData={setRoomData} />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="dash2" element={<Dash2 />} />
           <Route path="*" element={<NoPage />} />

@@ -1,13 +1,25 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useState } from 'react'
+import { toast, ToastContainer } from 'react-toastify';
 
-export const JoinRoom = () => {
+export const JoinRoom = ({user, updateRooms}) => {
+    const [roomId, setRoomId] = useState("")
     
     const handleJoin = async (e) => {
         e.preventDefault();
-        console.log("hello there")
+        try{
+            const res = await axios.post(`http://localhost:5000/api/rooms/joinRoom/${roomId}/${user._id}`);
+            if(res.status == 200){
+                toast.success("joined the room successfully");
+                updateRooms()
+            }
+        }catch(err){
+            toast.error("wrong RoomID")
+        }
     }
     return (
         <section className="text-gray-400 bg-gray-900 body-font">
+            <ToastContainer />
             <div className="container px-5 py-24 mx-auto">
                 <div className="flex flex-col text-center w-full mb-12">
                     <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Join a Review Room</h1>
@@ -17,10 +29,12 @@ export const JoinRoom = () => {
                     <div className="relative sm:mb-0 w-60">
                         <input
                             type="text"
-                            placeholder='Room Name'
+                            placeholder='Room Id'
                             required
-                            id="roomName"
-                            name="roomName"
+                            id="roomId"
+                            name="roomId"
+                            value={roomId}
+                            onInput={(e)=>{setRoomId(e.target.value)}}
                             className="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-900 focus:bg-transparent text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                         />
                     </div>
