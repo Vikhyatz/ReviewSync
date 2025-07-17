@@ -51,4 +51,18 @@ router.post("/joinRoom/:roomId/:userId", async (req,res)=>{
     }
 })
 
+router.post('/removeRoom/:roomId/:userId', async (req, res) => {
+    const roomId = req.params.roomId;
+    const userId = req.params.userId;
+
+    const removeRoomFromuUser = await User.findByIdAndUpdate(
+        userId,
+        {
+            $pull: { joinedRooms: roomId }
+        }
+    )
+
+    if(removeRoomFromuUser) res.status(200).json({ message: "remove room successfully"})
+})
+
 module.exports = router;

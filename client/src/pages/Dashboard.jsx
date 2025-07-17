@@ -43,8 +43,8 @@ const Dashboard = () => {
 
     return (
         <>
-            <ToastContainer />
-            <section className={`relative h-[80vh] bg-cover bg-center bg-no-repeat bg-[url(/hero.png)]`}>
+            <ToastContainer autoClose={3000}/>
+            <section className={`relative h-[80vh] bg-cover bg-center bg-no-repeat bg-[url(/hero.png)] select-none`}>
                 <div className="absolute inset-0 bg-black/50 bg-opacity-60 flex flex-col justify-center items-center text-center px-4">
                     <h1 className="text-white text-4xl md:text-6xl font-bold mb-6">
                         Welcome, {username.charAt(0).toUpperCase()}{username.slice(1)} 👋
@@ -63,7 +63,7 @@ const Dashboard = () => {
             {/* join room component */}
             <JoinRoom user={user} updateRooms={handleRoomsFetch}/>
 
-            <section className="text-gray-400 bg-gray-900 body-font">
+            <section className="text-gray-400 bg-gray-900 body-font select-none">
                 <div className="container px-5 py-24 mx-auto flex flex-wrap">
                     <div className="flex flex-col text-center w-full mb-20">
                         <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Your Review Rooms</h1>
@@ -73,10 +73,11 @@ const Dashboard = () => {
 
                         {Array.isArray(rooms) ? (
                             rooms.map((room, indx) => (
-                                <RoomCard key={indx} room={room}/>
+                                <RoomCard key={indx} room={room} user={user} updateRooms={handleRoomsFetch} taostFunc={toast}/>
                             ))
                         ) : "loading..."
                         }
+                        {Array.isArray(rooms) && rooms.length === 0 && "No Review Rooms Created :("}
 
                     </div>
                 </div>

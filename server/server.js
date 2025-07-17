@@ -1,4 +1,6 @@
 const express = require('express')
+const http = require('http')
+const { Server } = require("socket.io")
 const session = require("express-session")
 const passport = require("passport")
 const cors = require("cors")
@@ -10,10 +12,36 @@ const uploadRoutes = require("./routes/uploadRoutes")
 const roomRoutes = require("./routes/roomRoutes")
 
 const app = express()
+const server = http.createServer(app)
+
 env.config()
 
 app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
 app.use(express.json())
+
+
+// cors for socket server
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173"
+  }
+});
+
+// socket io connection
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  socket.on('codeChanged', (data) => {
+    console.log('Received updated text:', data);
+    io.emit('codeChanged', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -33,6 +61,6 @@ app.use("/api/rooms", roomRoutes)
 
 
 const port = process.env.PORT
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+server.listen(port, ()=>{
+  console.log("example app listening on port 5000")
 })

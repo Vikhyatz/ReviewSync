@@ -12,6 +12,7 @@ export const JoinRoom = ({user, updateRooms}) => {
             if(res.status == 200){
                 toast.success("joined the room successfully");
                 updateRooms()
+
             }
         }catch(err){
             toast.error("wrong RoomID")

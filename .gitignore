@@ -20,3 +20,6 @@ Thumbs.db
 
 # draw io files
 *.drawio
+
+#todo file
+todo.txt

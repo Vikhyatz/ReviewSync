@@ -4,6 +4,7 @@ const roomSchema = new mongoose.Schema({
     roomId: {type: String, required: true, unique: true},
     roomName: {type: String},
     fileText: {type: String},
+    fileType: {type: String},
     hostUser: {type: mongoose.Schema.ObjectId, ref: 'User'},
     joinedUsers: [
         {type: mongoose.Schema.ObjectId, ref: 'User'}
