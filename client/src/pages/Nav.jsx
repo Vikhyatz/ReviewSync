@@ -4,6 +4,7 @@ import React from 'react'
 import { Outlet, Link, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
+import { toast, ToastContainer } from 'react-toastify'
 
 const Nav = ({ signedIn, roomData }) => {
     const { setUser } = useAuth();
@@ -22,9 +23,23 @@ const Nav = ({ signedIn, roomData }) => {
             console.log(err)
         }
     }
+
+    const handleCopyId = (e,roomId) => {
+        navigator.clipboard.writeText(roomId)
+
+        e.target.innerText = "copied!"
+        setTimeout(() => {
+            e.target.innerText = "Copy Id"
+        }, 1000);
+        // console.log("helothere")
+    }
+
+
     return (
         <>
+            
             <header className="text-gray-400 bg-gray-900 body-font border-b-2 border-b-solid border-b-gray-700">
+                
                 <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
                     <Link className="flex title-font font-medium items-center text-white mb-4 md:mb-0">
                         {/* logo */}
@@ -38,12 +53,15 @@ const Nav = ({ signedIn, roomData }) => {
                         {signedIn && (<>
                             {roomData && (
                                 <>
-                                    <p className="mr-5 hover:text-white">Host: {roomData.hostUser.username}</p>
-                                    <p className="mr-5 hover:text-white">{roomData.joinedUsers.length} {roomData.joinedUsers.length == 1 ? "member" : "members"}</p>
+                                    <p className="mr-0 md:mr-5 hover:text-white">Host: {roomData.hostUser.username}</p>
+                                    <p className="mr-0 md:mr-5 hover:text-white">{roomData.joinedUsers.length} {roomData.joinedUsers.length == 1 ? "member" : "members"}</p>
+                                    <button onClick={(e) => handleCopyId(e,roomData.roomId)} className="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mr-0 md:mr-5">Copy Id
+                                    </button>
                                 </>
                             )}
 
-                            <Link to="/dashboard" className="mr-5 hover:text-white">Dashboard</Link>
+                            <Link to="/dashboard" className="mr-0 md:mr-5 hover:text-white">Dashboard</Link>
+
                             <button onClick={handleLogout} className="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mt-4 md:mt-0">Logout
                                 <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-4 h-4 ml-1" viewBox="0 0 24 24">
                                     <path d="M5 12h14M12 5l7 7-7 7"></path>

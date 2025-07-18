@@ -9,6 +9,7 @@ import NoPage from './pages/NoPage';
 import Dash2 from './pages/Dash2';
 import Nav from './pages/Nav';
 import { Room } from './pages/Room';
+import { ToastContainer } from 'react-toastify';
 
 export default function App() {
 
@@ -17,6 +18,7 @@ export default function App() {
   return (
 
     <BrowserRouter>
+    <ToastContainer />
       <Routes>
         <Route path='/' element={<Nav signedIn={false} />} >
           <Route index element={<Register />} />

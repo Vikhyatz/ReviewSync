@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-import { CiUser } from "react-icons/ci";
+import { CiFileOn, CiUser } from "react-icons/ci";
 import { GoPencil } from "react-icons/go";
 import { IoMdTime } from "react-icons/io";
 import { FaArrowRightLong } from "react-icons/fa6";
@@ -68,7 +68,7 @@ export const RoomCard = ({ room, user, updateRooms, taostFunc }) => {
                 </div>
                 <div className="flex-grow select-none">
                     <p className="text-sm text-gray-300 mt-2"><CiUser className='inline' size={20} /><span className="ml-2  font-medium text-white">Host -</span> {room.hostUser.username}</p>
-                    <p className="text-sm text-gray-300 mt-2"><GoPencil className='inline' size={17} /><span className="ml-2  font-medium text-white">mime type -</span> {room.fileType}</p>
+                    <p className="text-sm text-gray-300 mt-2"><CiFileOn className='inline' size={17} /><span className="ml-2  font-medium text-white">mime type -</span> {room.fileType}</p>
                     <p className="text-sm text-gray-300 mt-2"><GoPencil className='inline' size={17} /><span className="ml-2  font-medium text-white">Created At -</span> {convertDate(room.createdAt)}</p>
                     
 

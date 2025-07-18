@@ -71,10 +71,20 @@ export const Room = ({ setRoomData }) => {
       console.log('Connected to server:', newSocket.id);
     });
 
-    newSocket.on('codeChanged', (data) => {
+    newSocket.on('codeChanged', (roomName, data) => {
       console.log("code changed")
+      setCode("data");
+    });
+
+    newSocket.on('update', (data) => {
+      console.log("code update")
       setCode(data);
     });
+
+    // join room
+    newSocket.on("joinedRoom", (roomName) => {
+      console.log("sent roomName from the client", roomName)
+    })
 
     newSocket.on('disconnect', () => {
       console.log('Disconnected from server');
@@ -103,6 +113,17 @@ export const Room = ({ setRoomData }) => {
     fetchRoomDeets();
   }, [])
 
+  useEffect(() => {
+    if(socket && deets){
+      console.log("in here")
+      // join room
+    socket.emit("joinedRoom", deets.roomId);
+    }
+    
+  }, [socket, deets])
+  
+
+
   // wait till the room details are fetched
   if (!deets) return <Loader />
 
@@ -123,14 +144,14 @@ export const Room = ({ setRoomData }) => {
       console.log('Modified content changed:', newValue);
 
       // on change, socket emits the new value of code to be updated
-      socket.emit("codeChanged", newValue)
+      socket.emit("codeChanged", deets.roomId, newValue)
     });
   };
 
 
   if (loading) return <Loader />;
   if (!user) return <AccessDenied />
-console.log(deets.fileType)
+  console.log(deets.fileType)
   return (
     <>
       <div className='bg-gray-900 text-white flex flex-col items-center h-[calc(100vh-88px)]'>
@@ -139,11 +160,11 @@ console.log(deets.fileType)
           <div className='ml-5 mt-10 w-1/2 font-bold flex'>
             Reviewed Code
             <div className='cursor-pointer flex justify-center items-center w-fit rounded-xl bg-[#264D80] hover:bg-[#719bd2] transition-all duration-150 px-2 py-1 ml-4'>
-              <MdEdit className='inline mr-1'/>
+              <MdEdit className='inline mr-1' />
               editable
             </div>
             <div className='cursor-pointer flex justify-center items-center w-fit rounded-xl bg-[#264D80] hover:bg-[#719bd2] transition-all duration-150 px-2 py-1 ml-4'>
-              <FaMagic className='inline mr-2'/>
+              <FaMagic className='inline mr-2' />
               AI reviewed
             </div>
           </div>

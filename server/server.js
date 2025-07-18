@@ -32,10 +32,17 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  socket.on('codeChanged', (data) => {
-    console.log('Received updated text:', data);
-    io.emit('codeChanged', data);
+  socket.on('codeChanged', (roomName, data) => {
+    // update code to the joined room
+    io.to(roomName).emit('update', data)
   });
+
+  // join room
+  socket.on("joinedRoom", (roomName)=>{
+    console.log("joined new room" , roomName)
+    // join room when opened review room on the client
+    socket.join(roomName)
+  })
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
