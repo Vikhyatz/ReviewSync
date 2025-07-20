@@ -62,7 +62,33 @@ router.post('/removeRoom/:roomId/:userId', async (req, res) => {
         }
     )
 
+    removeUserFromRoom = await Room.findByIdAndUpdate(
+        roomId, 
+        {
+            $pull: { joinedUsers: userId }
+        }
+    )
+
     if(removeRoomFromuUser) res.status(200).json({ message: "remove room successfully"})
+})
+
+router.get("/checkUser/:userId/:roomId", async (req, res) => {
+    const userId = req.params.userId;
+    const roomId = req.params.roomId;
+
+    const roomData = await Room.findById(roomId);
+    console.log(roomData.joinedUsers)
+
+    // check user in the joined users arr
+    const check = roomData.joinedUsers.filter((users)=>{
+        return users == userId
+    })
+    
+    if(check.length == 0){
+        res.status(401).json({ msg: "unauthorized"})
+    }
+
+    res.status(200).json({ msg: "authorized"})
 })
 
 module.exports = router;

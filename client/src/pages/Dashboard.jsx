@@ -73,7 +73,7 @@ const Dashboard = () => {
 
                         {Array.isArray(rooms) ? (
                             rooms.map((room, indx) => (
-                                <RoomCard key={indx} room={room} user={user} updateRooms={handleRoomsFetch} taostFunc={toast}/>
+                                <RoomCard key={indx} room={room} user={user} updateRooms={handleRoomsFetch}/>
                             ))
                         ) : "loading..."
                         }

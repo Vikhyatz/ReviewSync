@@ -6,7 +6,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import NoPage from './pages/NoPage';
-import Dash2 from './pages/Dash2';
+import Home from './pages/Home';
 import Nav from './pages/Nav';
 import { Room } from './pages/Room';
 import { ToastContainer } from 'react-toastify';
@@ -21,14 +21,14 @@ export default function App() {
     <ToastContainer />
       <Routes>
         <Route path='/' element={<Nav signedIn={false} />} >
-          <Route index element={<Register />} />
+          <Route index element={<Home />}/>
+          <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
         </Route>
         
         <Route path='/' element={<Nav signedIn={true} roomData={roomData} />} >
           <Route path="/room/:id" element={<Room setRoomData={setRoomData} />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="dash2" element={<Dash2 />} />
           <Route path="*" element={<NoPage />} />
         </Route>
 

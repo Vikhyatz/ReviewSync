@@ -50,19 +50,44 @@ connectDB().then(() => {
 export const Room = ({ setRoomData }) => {
   const { user, loading } = useAuth();
 
-
+  
   const modifiedModelRef = useRef(null);
-
 
   const params = useParams();
   const roomId = params.id;
   const [deets, setDeets] = useState(null)
 
+  // verification state
+  const [authorized, setAuthorized] = useState(null)
+
   // socket states
   const [socket, setSocket] = useState(null);
   const [code, setCode] = useState("");
 
-  // socket emits
+  // verify validity of room connection from the user id
+  useEffect(() => {
+    const userVerification = async () => {
+      try {
+        const res = await axios(`http://localhost:5000/api/rooms/checkUser/${user._id}/${roomId}`)
+        // if(res.status == 201){
+        //   console.log(res.data)
+        // }
+        console.log(res.data)
+        setAuthorized(true)
+        // if(res.status == 401) return <AccessDenied />
+      }catch(err){
+        console.log("it is unauthorized")
+        setAuthorized(false)
+
+      }
+    }
+    if(user){
+      userVerification()
+    }
+    
+  }, [user])
+
+  // socket initialization
   useEffect(() => {
     const newSocket = io(import.meta.env.VITE_SOCKET_SERVER_URL);
     setSocket(newSocket);
@@ -114,14 +139,14 @@ export const Room = ({ setRoomData }) => {
   }, [])
 
   useEffect(() => {
-    if(socket && deets){
+    if (socket && deets) {
       console.log("in here")
       // join room
-    socket.emit("joinedRoom", deets.roomId);
+      socket.emit("joinedRoom", deets.roomId);
     }
-    
+
   }, [socket, deets])
-  
+
 
 
   // wait till the room details are fetched
@@ -150,7 +175,10 @@ export const Room = ({ setRoomData }) => {
 
 
   if (loading) return <Loader />;
-  if (!user) return <AccessDenied />
+  if(authorized == null) return <Loader />;
+  if (!user) return <AccessDenied />;
+  if (!authorized) return <AccessDenied />;
+
   console.log(deets.fileType)
   return (
     <>

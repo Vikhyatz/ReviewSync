@@ -1,15 +1,18 @@
 import React from 'react'
 import { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, redirect } from 'react-router-dom';
 
 // yup resolver, react hook form
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from '../../lib/validations/registerSchema';
-import { useForm} from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
+
+    const navigate = useNavigate();
 
     // methods to integrate yup with RHK
     const methods = useForm({
@@ -24,13 +27,14 @@ const Register = () => {
         const username = data.username;
         const password = data.password;
         const email = data.email
-        try{
+        try {
             const res = await axios.post('http://localhost:5000/api/auth/register', { username, email, password }, { withCredentials: true });
             console.log(res.data)
-            if(res.status == 200){
+            if (res.status == 200) {
                 toast("use registered successfully, now you can login!")
+                navigate('/login')
             }
-        }catch(error){
+        } catch (error) {
             console.log("not able to create account right now")
             toast("not able to register user")
         }
@@ -39,7 +43,7 @@ const Register = () => {
     return (
 
         <section className="text-gray-400 bg-gray-900 h-screen body-font">
-            <ToastContainer />
+            {/* <ToastContainer /> */}
             <div className="container px-5 py-24 mx-auto flex flex-wrap items-center">
                 <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
                     <h1 className="title-font font-medium text-3xl text-white">Join the Future of Code Review</h1>

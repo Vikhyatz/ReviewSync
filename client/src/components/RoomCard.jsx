@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 
-export const RoomCard = ({ room, user, updateRooms, taostFunc }) => {
+export const RoomCard = ({ room, user, updateRooms }) => {
 
     const [dropDown, setDropdown] = useState(false)
     const dropdownRef = useRef(null);
@@ -37,11 +37,11 @@ export const RoomCard = ({ room, user, updateRooms, taostFunc }) => {
         try{
             const res = await axios.post(`http://localhost:5000/api/rooms/removeRoom/${roomId}/${user._id}`);
             if(res.status == 200){
-                taostFunc.success("room removed successfully!")
+                toast.success("room left successfully!")
                 updateRooms();
             }
         }catch(err){
-            taostFunc.error("not able to remove the room")
+            toast.error("not able to remove the room")
         }
     }
 
