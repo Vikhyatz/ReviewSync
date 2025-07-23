@@ -4,9 +4,9 @@ const isLoggedIn = require("../middleware/loggedIn");
 const User = require("../models/User");
 const router = express.Router()
 
-router.get("/getRooms/:userId" ,async (req, res) => {
+router.get("/getRooms/:userId", async (req, res) => {
     const userId = req.params.userId;
-    
+
     console.log(userId)
     const userData = await User.findById(userId).populate({
         path: "joinedRooms",
@@ -15,13 +15,13 @@ router.get("/getRooms/:userId" ,async (req, res) => {
     res.json({ rooms: userData.joinedRooms })
 })
 
-router.get("/getInfo/:roomId" ,async (req, res) => {
+router.get("/getInfo/:roomId", async (req, res) => {
     const roomId = req.params.roomId;
     const roomData = await Room.findById(roomId).populate('hostUser');
     res.json({ roomData: roomData })
 })
 
-router.post("/joinRoom/:roomId/:userId", async (req,res)=>{
+router.post("/joinRoom/:roomId/:userId", async (req, res) => {
     const roomId = req.params.roomId;
     const userId = req.params.userId;
     console.log(roomId)
@@ -63,13 +63,13 @@ router.post('/removeRoom/:roomId/:userId', async (req, res) => {
     )
 
     removeUserFromRoom = await Room.findByIdAndUpdate(
-        roomId, 
+        roomId,
         {
             $pull: { joinedUsers: userId }
         }
     )
 
-    if(removeRoomFromuUser) res.status(200).json({ message: "remove room successfully"})
+    if (removeRoomFromuUser) res.status(200).json({ message: "remove room successfully" })
 })
 
 router.get("/checkUser/:userId/:roomId", async (req, res) => {
@@ -80,15 +80,36 @@ router.get("/checkUser/:userId/:roomId", async (req, res) => {
     console.log(roomData.joinedUsers)
 
     // check user in the joined users arr
-    const check = roomData.joinedUsers.filter((users)=>{
+    const check = roomData.joinedUsers.filter((users) => {
         return users == userId
     })
-    
-    if(check.length == 0){
-        res.status(401).json({ msg: "unauthorized"})
+
+    if (check.length == 0) {
+        res.status(401).json({ msg: "unauthorized" })
     }
 
-    res.status(200).json({ msg: "authorized"})
+    res.status(200).json({ msg: "authorized" })
 })
+
+router.post("/saveCode", async (req, res) => {
+    console.log(req.body)
+    const code = req.body.code;
+    const roomId = req.body.roomId;
+
+    try {
+        const updateCode = await Room.findByIdAndUpdate(
+            roomId,
+            {
+                fileText: code
+            }
+        )
+        res.status(200).json({ msg: "code saved successfully" })
+    } catch (err) {
+        res.status(500).json({ msg: "internal server error" })
+    }
+
+
+})
+
 
 module.exports = router;

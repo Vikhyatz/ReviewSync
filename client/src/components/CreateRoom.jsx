@@ -7,8 +7,10 @@ import { useState, useRef } from 'react';
 
 import { FaCloudUploadAlt } from "react-icons/fa";
 import axios from 'axios';
+import LoadingModal from './LoadingModal';
 
 export const CreateRoom = ({updateRooms, toastFunc, user}) => {
+    const [loading, setLoading] = useState(false)
     // RHK and yup resolver integration
     const methods = useForm({
         resolver: yupResolver(roomSchema)
@@ -25,6 +27,7 @@ export const CreateRoom = ({updateRooms, toastFunc, user}) => {
     };
 
     const handleUpload = async (data) => {
+        setLoading(true)
         const formData = new FormData();
         formData.append('file', file);
         formData.append('roomName', data.roomName)
@@ -44,9 +47,11 @@ export const CreateRoom = ({updateRooms, toastFunc, user}) => {
             console.error('Upload error:', err);
             toastFunc.error("not able to create room")
         }
+        setLoading(false)
     };
     return (
         <section className="text-gray-400 bg-gray-900 body-font">
+            {loading ? <LoadingModal /> : ""}
             <div className="container px-5 py-24 mx-auto">
                 <div className="flex flex-col text-center w-full mb-12">
                     <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-white">Create a New Review Room</h1>
@@ -82,7 +87,7 @@ export const CreateRoom = ({updateRooms, toastFunc, user}) => {
                     </div>
 
                     <button type="submit" className="inline-flex text-white bg-blue-500 border-0 py-2 px-6 focus:outline-none hover:bg-blue-600 rounded text-lg justify-center items-center ml-4">
-                        Create Room
+                        {loading ? "Reviewing Code..." : "Create Room"}
                     </button>
                 </form>
             </div>

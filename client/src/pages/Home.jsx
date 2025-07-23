@@ -67,7 +67,8 @@ const Home = () => {
                     </div>
 
                     <div className="flex flex-wrap -m-4 justify-center md:gap-y-10 gap-0">
-                        {featuresArr.map((feature, indx) => (
+                        {
+                        featuresArr.map((feature, indx) => (
                             <FeaturesCard
                                 key={indx}
                                 icon={feature.icon}
@@ -75,7 +76,8 @@ const Home = () => {
                                 subHead={feature.subHead}
                                 hoverColor={feature.hoverColor}
                             />
-                        ))}
+                        ))
+                        }
                     </div>
                 </div>
             </section>

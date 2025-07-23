@@ -16,46 +16,17 @@ import { io } from "socket.io-client"
 import { MdEdit } from "react-icons/md";
 import { FaMagic } from 'react-icons/fa';
 
-const newCode = `const express = require('express')
-const app = express()
-const PORT = process.env.PORT || 3000
-
-const authRouter = require('./router/auth-router')
-const dotenv = require('dotenv')
-const connectDB = require('./utils/db')
-
-// Load environment variables
-dotenv.config()
-
-// Middleware
-app.use(express.json())
-
-// Routes
-app.get('/', (req, res) => {
-  res.send('Welcome to the updated version!');
-});
-
-app.use('/api/auth', authRouter);
-
-// Connect to DB and start server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log("🚀 Server is listening at http://localhost:PORT");
-  });
-}).catch((err) => {
-  console.error('❌ Failed to connect to DB:', err);
-});
-`
-
 export const Room = ({ setRoomData }) => {
   const { user, loading } = useAuth();
 
-  
+
   const modifiedModelRef = useRef(null);
 
   const params = useParams();
   const roomId = params.id;
   const [deets, setDeets] = useState(null)
+
+  const [saveLoading, setSaveLoading] = useState(false)
 
   // verification state
   const [authorized, setAuthorized] = useState(null)
@@ -75,16 +46,16 @@ export const Room = ({ setRoomData }) => {
         console.log(res.data)
         setAuthorized(true)
         // if(res.status == 401) return <AccessDenied />
-      }catch(err){
+      } catch (err) {
         console.log("it is unauthorized")
         setAuthorized(false)
 
       }
     }
-    if(user){
+    if (user) {
       userVerification()
     }
-    
+
   }, [user])
 
   // socket initialization
@@ -97,12 +68,10 @@ export const Room = ({ setRoomData }) => {
     });
 
     newSocket.on('codeChanged', (roomName, data) => {
-      console.log("code changed")
       setCode("data");
     });
 
     newSocket.on('update', (data) => {
-      console.log("code update")
       setCode(data);
     });
 
@@ -130,7 +99,7 @@ export const Room = ({ setRoomData }) => {
         // state for dynamic nav
         setRoomData(res.data.roomData)
         // when the details are fetched set the modified code to the code state
-        setCode(newCode)
+        setCode(res.data.aiReviewedCode)
       } catch (err) {
         console.log(err)
       }
@@ -155,7 +124,7 @@ export const Room = ({ setRoomData }) => {
   // diff editor mount configurations
   const handleEditorMount = (editor, monaco) => {
     const originalModel = monaco.editor.createModel(deets.fileText, deets.fileType);
-    const modifiedModel = monaco.editor.createModel(code, deets.fileType);
+    const modifiedModel = monaco.editor.createModel(deets.aiReviewedCode, deets.fileType);
 
     editor.setModel({
       original: originalModel,
@@ -166,46 +135,73 @@ export const Room = ({ setRoomData }) => {
 
     modifiedModel.onDidChangeContent(() => {
       const newValue = modifiedModel.getValue();
-      console.log('Modified content changed:', newValue);
+      // console.log('Modified content changed:', newValue);
 
       // on change, socket emits the new value of code to be updated
       socket.emit("codeChanged", deets.roomId, newValue)
     });
   };
 
+  const handleSave = async () => {
+    setSaveLoading(true)
+
+    const value = modifiedModelRef.current.getValue();
+
+    try {
+      const res = await axios.post(`http://localhost:5000/api/rooms/saveCode`, {
+        code: value,
+        roomId: roomId,
+      })
+      console.log(res.data)
+
+    } catch (err) {
+      console.log(err)
+    }
+    setSaveLoading(false)
+  }
+
 
   if (loading) return <Loader />;
-  if(authorized == null) return <Loader />;
   if (!user) return <AccessDenied />;
+  if (authorized == null) return <Loader />;
   if (!authorized) return <AccessDenied />;
 
   console.log(deets.fileType)
   return (
     <>
       <div className='bg-gray-900 text-white flex flex-col items-center h-[calc(100vh-88px)]'>
+
+        <button class="relative px-8 py-3 bg-black text-white font-semibold rounded-lg border-2 border-blue-500 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_20px_10px_rgba(59,130,246,0.6)] active:scale-95 active:shadow-[0_0_10px_5px_rgba(59,130,246,0.4)] group my-10 w-4/5 flex items-center justify-center">
+          <span class="flex items-center space-x-2">
+            <FaMagic className='inline mr-2' />
+            <span>AI Chat</span>
+          </span>
+          <span class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-blue-500/20 to-indigo-500/20"
+          ></span>
+        </button>
+
         <div className='hidden justify-between w-4/5 text-xl lg:flex '>
           <div className='ml-5 mt-10 w-1/2 font-bold'>Original Code</div>
           <div className='ml-5 mt-10 w-1/2 font-bold flex'>
             Reviewed Code
-            <div className='cursor-pointer flex justify-center items-center w-fit rounded-xl bg-[#264D80] hover:bg-[#719bd2] transition-all duration-150 px-2 py-1 ml-4'>
+            <div className='cursor-pointer flex justify-center items-center w-fit rounded-xl bg-blue-500 hover:bg-blue-600 transition-all duration-150 px-2 py-1 ml-4'>
               <MdEdit className='inline mr-1' />
               editable
             </div>
-            <div className='cursor-pointer flex justify-center items-center w-fit rounded-xl bg-[#264D80] hover:bg-[#719bd2] transition-all duration-150 px-2 py-1 ml-4'>
+            <div className='cursor-pointer flex justify-center items-center w-fit rounded-xl bg-blue-500 hover:bg-blue-6600 transition-all duration-150 px-2 py-1 ml-4'>
               <FaMagic className='inline mr-2' />
               AI reviewed
             </div>
           </div>
         </div>
 
-        <div className='w-4/5 h-4/5 overflow-hidden mt-3 rounded-3xl border-2 border-solid border-gray-700'>
+        <div className='w-4/5 h-4/5 overflow-hidden mt-3 rounded-t-3xl border-2 border-solid border-gray-700'>
           <DiffEditor
             height="90vh"
-            // language="text/javascript"
             language={deets.fileType}
             theme="vs-dark"
             onMount={handleEditorMount}
-            modified={code}
+            modified={deets.aiReviewedCode}
             options={{
               wordWrap: "on",
               renderSideBySide: true,
@@ -213,6 +209,11 @@ export const Room = ({ setRoomData }) => {
             }}
           />
 
+        </div>
+        <div className='w-4/5 h-15 rounded-b-3xl flex justify-end items-center'>
+          <button onClick={handleSave} className="inline-flex text-white bg-blue-500 border-0 py-2 px-26 focus:outline-none hover:bg-blue-600 text-lg justify-center items-center mr-2 rounded-2xl cursor-pointer">
+            {saveLoading ? "Loading..." : "Save"}
+          </button>
         </div>
       </div>
 

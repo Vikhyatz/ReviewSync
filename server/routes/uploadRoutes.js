@@ -1,5 +1,5 @@
-const { v4: uuidv4 } = require("uuid")
 const fs = require('fs');
+const { v4: uuidv4 } = require("uuid")
 const path = require('path');
 const multer = require('multer')
 const express = require("express");
@@ -8,11 +8,8 @@ const isLoggedIn = require("../middleware/loggedIn");
 const User = require("../models/User");
 const router = express.Router();
 
-// const Room = require('./models/Room')
+const { GoogleGenAI } = require("@google/genai");
 
-
-
-// const upload = multer({ dest: 'uploads/' })
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'routes/uploads/')
@@ -24,7 +21,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-
+// function to extract json using regex patterns
+// function extractJSON(text) {
+//     const match = text.match(/\{[\s\S]*\}/);
+//     if (match) {
+//         try {
+//             return JSON.parse(match[0]);
+//         } catch (e) {
+//             console.error("Parsing failed:", e);
+//         }
+//     }
+//     return null;
+// }
 
 // uploading multer route handler
 router.post("/", upload.single('file'), (req, res, next) => {
@@ -55,16 +63,45 @@ router.post("/", upload.single('file'), (req, res, next) => {
             return next(err);
         }
 
+        // give the code to gemini api, to save the reviewed code in the db
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
+
+
+        // query to give the api instructions
+        const query = `
+        You are a code reviewer. Given a code snippet, perform the following:
+
+1. Return a **better version of the code** with improvements.
+2. Provide a **short summary** of the improvements made.
+3. Don't even use markdown syntax, i just want the updated code.
+4. add comments in the ending of the code about what did you optimize/improve/change in the code for better understanding.
+
+Respond strictly in the format told above just the code nothing else.
+
+        this is the code: ${data}
+        `;
+
+        // response from the gemini api
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: query,
+        });
+
+        const resText = response.text;
+
+        console.log(resText)
+
+
         // make a room name document, save the file text in the data
         const newRoom = new Room({
             roomId: roomId,
             roomName: roomName,
             fileText: data,
+            aiReviewedCode: resText,
             fileType: file.mimetype,
             hostUser: userId,
             joinedUsers: [userId]
         });
-        // newRoom.joinedUsers.push(anotherUserId);
         await newRoom.save()
 
         // update the room in the user's document too
