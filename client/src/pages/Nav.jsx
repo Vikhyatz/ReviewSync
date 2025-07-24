@@ -1,15 +1,27 @@
 import axios from 'axios'
-import React from 'react'
+import React, { useEffect } from 'react'
+
+import { useLocation } from 'react-router-dom';
 
 import { Outlet, Link, useNavigate } from 'react-router-dom'
 
 import { useAuth } from '../context/AuthContext'
 import { toast, ToastContainer } from 'react-toastify'
 
-const Nav = ({ signedIn, roomData }) => {
+const Nav = ({ signedIn, roomData, setRoomData }) => {
     const { setUser } = useAuth();
 
     const navigate = useNavigate();
+
+
+    const location = useLocation();
+
+    useEffect(() => {
+        // Clear room data if not in a room
+        if (!location.pathname.includes('/room') && roomData) {
+            setRoomData(null)
+        }
+    }, [location.pathname]);
 
     const handleLogout = async () => {
         try {
@@ -24,7 +36,7 @@ const Nav = ({ signedIn, roomData }) => {
         }
     }
 
-    const handleCopyId = (e,roomId) => {
+    const handleCopyId = (e, roomId) => {
         navigator.clipboard.writeText(roomId)
 
         e.target.innerText = "copied!"
@@ -36,9 +48,9 @@ const Nav = ({ signedIn, roomData }) => {
 
     return (
         <>
-            
+
             <header className="text-gray-400 bg-gray-900 body-font border-b-2 border-b-solid border-b-gray-700">
-                
+
                 <div className="container mx-auto flex flex-wrap p-5 flex-col lg:flex-row items-center">
                     <Link to="/dashboard" className="flex title-font font-medium items-center text-white mb-4 md:mb-0">
                         {/* logo */}
@@ -54,7 +66,7 @@ const Nav = ({ signedIn, roomData }) => {
                                 <>
                                     <p className="mr-0 md:mr-5 hover:text-white">Host: {roomData.hostUser.username}</p>
                                     <p className="mr-0 md:mr-5 hover:text-white">{roomData.joinedUsers.length} {roomData.joinedUsers.length == 1 ? "member" : "members"}</p>
-                                    <button onClick={(e) => handleCopyId(e,roomData.roomId)} className="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mr-0 md:mr-5">Copy Id
+                                    <button onClick={(e) => handleCopyId(e, roomData.roomId)} className="inline-flex items-center bg-gray-800 border-0 py-1 px-3 focus:outline-none hover:bg-gray-700 rounded text-base mr-0 md:mr-5">Copy Id
                                     </button>
                                 </>
                             )}

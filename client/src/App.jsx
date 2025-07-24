@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -15,6 +15,7 @@ export default function App() {
 
   const [roomData, setRoomData] = useState(null)
 
+
   return (
 
     <BrowserRouter>
@@ -26,7 +27,7 @@ export default function App() {
           <Route path="login" element={<Login />} />
         </Route>
         
-        <Route path='/' element={<Nav signedIn={true} roomData={roomData} />} >
+        <Route path='/' element={<Nav signedIn={true} roomData={roomData} setRoomData={setRoomData} />} >
           <Route path="/room/:id" element={<Room setRoomData={setRoomData} />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="*" element={<NoPage />} />

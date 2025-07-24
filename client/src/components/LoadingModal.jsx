@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 const messages = [
   "Reviewing your code...",
-  "Creating a new room...",
-  "working on it..."
+  "Analyzing logic and structure...",
+  "Checking for best practices...",
+  "Optimizing performance...",
+  "Almost done, hang tight!"
 ];
 
 const LoadingModal = () => {
@@ -12,17 +14,17 @@ const LoadingModal = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
-    }, 5000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-black/80 bg-opacity-50 z-50 flex items-center justify-center">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-sm mx-4 text-center">
-        <div className="flex justify-center mb-4">
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm animate-fade-in">
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm mx-4 text-center transform scale-95 animate-scale-in">
+        <div className="flex justify-center mb-6">
           <svg
-            className="animate-spin h-8 w-8 text-blue-600"
+            className="animate-spin h-10 w-10 text-blue-600 dark:text-blue-400"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -42,8 +44,10 @@ const LoadingModal = () => {
             />
           </svg>
         </div>
-        <p className="text-lg font-medium text-gray-700 dark:text-gray-100 transition-all duration-500">
-          {messages[currentMessageIndex]}
+        <p className="text-xl font-semibold text-gray-800 dark:text-gray-100 transition-opacity duration-300 ease-in-out">
+            <span key={currentMessageIndex} className="animate-fade-in-out">
+                {messages[currentMessageIndex]}
+            </span>
         </p>
       </div>
     </div>

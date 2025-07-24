@@ -21,19 +21,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-// function to extract json using regex patterns
-// function extractJSON(text) {
-//     const match = text.match(/\{[\s\S]*\}/);
-//     if (match) {
-//         try {
-//             return JSON.parse(match[0]);
-//         } catch (e) {
-//             console.error("Parsing failed:", e);
-//         }
-//     }
-//     return null;
-// }
-
 // uploading multer route handler
 router.post("/", upload.single('file'), (req, res, next) => {
     if (!req.file) return res.status(400).send('No file uploaded');
@@ -72,9 +59,10 @@ router.post("/", upload.single('file'), (req, res, next) => {
         You are a code reviewer. Given a code snippet, perform the following:
 
 1. Return a **better version of the code** with improvements.
-2. Provide a **short summary** of the improvements made.
-3. Don't even use markdown syntax, i just want the updated code.
-4. add comments in the ending of the code about what did you optimize/improve/change in the code for better understanding.
+2. Don't even use markdown syntax, i just want the updated code.
+3. add comments in the ending of the code about what did you optimize/improve/change in the code for better understanding.
+
+the summary should be in comments strictly!
 
 Respond strictly in the format told above just the code nothing else.
 
@@ -88,8 +76,6 @@ Respond strictly in the format told above just the code nothing else.
         });
 
         const resText = response.text;
-
-        console.log(resText)
 
 
         // make a room name document, save the file text in the data

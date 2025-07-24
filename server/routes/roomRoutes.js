@@ -2,6 +2,8 @@ const express = require("express");
 const Room = require("../models/Room");
 const isLoggedIn = require("../middleware/loggedIn");
 const User = require("../models/User");
+const { GoogleGenAI } = require("@google/genai");
+const { marked } = require("marked");
 const router = express.Router()
 
 router.get("/getRooms/:userId", async (req, res) => {
@@ -107,8 +109,43 @@ router.post("/saveCode", async (req, res) => {
     } catch (err) {
         res.status(500).json({ msg: "internal server error" })
     }
+})
 
 
+router.get("/AiMsg", async (req, res) => {
+    const code = req.query.code;
+    const query = req.query.query;
+
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })
+
+    const finalQuery = `
+You are a senior software engineer assisting with code-related queries.
+
+Below is a code snippet and a question from a developer. Provide a helpful, concise answer. You may suggest improvements, debug issues, explain logic, or offer best practices.
+
+Respond in plain text, no markdown, developer-friendly language.
+
+---
+
+Question:
+${query}
+
+---
+
+Code:
+${code}
+    `
+
+    // response from the gemini api
+    const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: finalQuery,
+    });
+
+    const resText = marked.parse(response.text);
+
+
+    res.status(200).json({ responseText: resText })
 })
 
 

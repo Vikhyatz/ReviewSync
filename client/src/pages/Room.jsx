@@ -15,6 +15,7 @@ import { io } from "socket.io-client"
 
 import { MdEdit } from "react-icons/md";
 import { FaMagic } from 'react-icons/fa';
+import { ChatModal } from '../components/ChatModal';
 
 export const Room = ({ setRoomData }) => {
   const { user, loading } = useAuth();
@@ -26,7 +27,11 @@ export const Room = ({ setRoomData }) => {
   const roomId = params.id;
   const [deets, setDeets] = useState(null)
 
+  // loader for updating the code
   const [saveLoading, setSaveLoading] = useState(false)
+
+  // state for Chat modal
+  const [chat, setChat] = useState(false)
 
   // verification state
   const [authorized, setAuthorized] = useState(null)
@@ -40,9 +45,6 @@ export const Room = ({ setRoomData }) => {
     const userVerification = async () => {
       try {
         const res = await axios(`http://localhost:5000/api/rooms/checkUser/${user._id}/${roomId}`)
-        // if(res.status == 201){
-        //   console.log(res.data)
-        // }
         console.log(res.data)
         setAuthorized(true)
         // if(res.status == 401) return <AccessDenied />
@@ -68,7 +70,7 @@ export const Room = ({ setRoomData }) => {
     });
 
     newSocket.on('codeChanged', (roomName, data) => {
-      setCode("data");
+      setCode(data);
     });
 
     newSocket.on('update', (data) => {
@@ -100,6 +102,7 @@ export const Room = ({ setRoomData }) => {
         setRoomData(res.data.roomData)
         // when the details are fetched set the modified code to the code state
         setCode(res.data.aiReviewedCode)
+
       } catch (err) {
         console.log(err)
       }
@@ -132,10 +135,10 @@ export const Room = ({ setRoomData }) => {
     });
 
     modifiedModelRef.current = modifiedModel;
+    setCode(modifiedModel.getValue());
 
     modifiedModel.onDidChangeContent(() => {
       const newValue = modifiedModel.getValue();
-      // console.log('Modified content changed:', newValue);
 
       // on change, socket emits the new value of code to be updated
       socket.emit("codeChanged", deets.roomId, newValue)
@@ -160,23 +163,28 @@ export const Room = ({ setRoomData }) => {
     setSaveLoading(false)
   }
 
+  // setInterval(() => {
+  //   console.log(code)
+  // }, 1000);
 
   if (loading) return <Loader />;
   if (!user) return <AccessDenied />;
   if (authorized == null) return <Loader />;
   if (!authorized) return <AccessDenied />;
-
-  console.log(deets.fileType)
   return (
     <>
-      <div className='bg-gray-900 text-white flex flex-col items-center h-[calc(100vh-88px)]'>
+    {/* <ChatModal isOpen={chat} onClose={setChat} code={code}/> */}
+    {chat && code !== undefined && (
+  <ChatModal isOpen={chat} onClose={setChat} code={code} />
+)}
+      <div className='bg-gray-900 text-white flex flex-col items-center min-h-screen'>
 
-        <button class="relative px-8 py-3 bg-black text-white font-semibold rounded-lg border-2 border-blue-500 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_20px_10px_rgba(59,130,246,0.6)] active:scale-95 active:shadow-[0_0_10px_5px_rgba(59,130,246,0.4)] group my-10 w-4/5 flex items-center justify-center">
-          <span class="flex items-center space-x-2">
+        <button onClick={()=>{ setChat(!chat) }} className="relative px-8 py-3 bg-black text-white font-semibold rounded-lg border-2 border-blue-500 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_20px_10px_rgba(59,130,246,0.6)] active:scale-95 active:shadow-[0_0_10px_5px_rgba(59,130,246,0.4)] group my-10 w-4/5 flex items-center justify-center">
+          <span className="flex items-center space-x-2">
             <FaMagic className='inline mr-2' />
             <span>AI Chat</span>
           </span>
-          <span class="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-blue-500/20 to-indigo-500/20"
+          <span className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-blue-500/20 to-indigo-500/20"
           ></span>
         </button>
 
@@ -195,13 +203,13 @@ export const Room = ({ setRoomData }) => {
           </div>
         </div>
 
-        <div className='w-4/5 h-4/5 overflow-hidden mt-3 rounded-t-3xl border-2 border-solid border-gray-700'>
+        <div className='w-4/5 h-4/5 overflow-hidden mt-3 rounded-3xl border-2 border-solid border-gray-700'>
           <DiffEditor
             height="90vh"
             language={deets.fileType}
             theme="vs-dark"
             onMount={handleEditorMount}
-            modified={deets.aiReviewedCode}
+            modified={code}
             options={{
               wordWrap: "on",
               renderSideBySide: true,
@@ -210,8 +218,8 @@ export const Room = ({ setRoomData }) => {
           />
 
         </div>
-        <div className='w-4/5 h-15 rounded-b-3xl flex justify-end items-center'>
-          <button onClick={handleSave} className="inline-flex text-white bg-blue-500 border-0 py-2 px-26 focus:outline-none hover:bg-blue-600 text-lg justify-center items-center mr-2 rounded-2xl cursor-pointer">
+        <div className='w-4/5 h-15 flex justify-end items-center'>
+          <button onClick={handleSave} className="inline-flex text-white bg-blue-500 border-0 py-2 px-26 focus:outline-none hover:bg-blue-600 text-lg justify-center items-center mr-2 rounded-xl cursor-pointer">
             {saveLoading ? "Loading..." : "Save"}
           </button>
         </div>
