@@ -29,7 +29,6 @@ export const ChatModal = ({ isOpen, onClose, code }) => {
             });
             setMessages(prev => [...prev, { msgState: "recieved", content: res.data.responseText }]);
         } catch (err) {
-            console.log(err)
         }
         setLoading(false)
     }

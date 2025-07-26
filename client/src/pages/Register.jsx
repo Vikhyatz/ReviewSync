@@ -29,13 +29,11 @@ const Register = () => {
         const email = data.email
         try {
             const res = await axios.post('http://localhost:5000/api/auth/register', { username, email, password }, { withCredentials: true });
-            console.log(res.data)
             if (res.status == 200) {
                 toast("use registered successfully, now you can login!")
                 navigate('/login')
             }
         } catch (error) {
-            console.log("not able to create account right now")
             toast("not able to register user")
         }
     };
@@ -43,7 +41,6 @@ const Register = () => {
     return (
 
         <section className="text-gray-400 bg-gray-900 h-screen body-font">
-            {/* <ToastContainer /> */}
             <div className="container px-5 py-24 mx-auto flex flex-wrap items-center">
                 <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
                     <h1 className="title-font font-medium text-3xl text-white">Join the Future of Code Review</h1>

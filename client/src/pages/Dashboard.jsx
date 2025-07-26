@@ -20,10 +20,8 @@ const Dashboard = () => {
         const userId = user._id
         try {
             const res = await axios.get(`http://localhost:5000/api/rooms/getRooms/${userId}`)
-            console.log(res.data)
             setRooms(res.data.rooms)
         } catch (err) {
-            console.log(err)
         }
     }
 
@@ -37,7 +35,7 @@ const Dashboard = () => {
 
     if (loading) return <Loader />;
     if (!user) return <Navigate to="/login" replace />;
-    console.log(user)
+    (user)
 
     const username = user.username;
 

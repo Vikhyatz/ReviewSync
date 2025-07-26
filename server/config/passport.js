@@ -5,10 +5,8 @@ module.exports = function(passport) {
     passport.use(new LocalStrategy(
         { usernameField: 'email' },
         async (email, password, done) => {
-        console.log("i was here")
         try {
             const user = await User.findOne({ email: email });
-            console.log("found user, ", user)
             if (!user) return done(null, false, { message: 'User not found' });
             
             const isMatch = await user.isValidPassword(password);

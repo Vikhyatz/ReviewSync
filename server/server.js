@@ -30,7 +30,6 @@ const io = new Server(server, {
 
 // socket io connection
 io.on('connection', (socket) => {
-  console.log('User connected:', socket.id);
 
   socket.on('codeChanged', (roomName, data) => {
     // update code to the joined room
@@ -39,7 +38,6 @@ io.on('connection', (socket) => {
 
   // join room
   socket.on("joinedRoom", (roomName)=>{
-    console.log("joined new room" , roomName)
     // join room when opened review room on the client
     socket.join(roomName)
   })

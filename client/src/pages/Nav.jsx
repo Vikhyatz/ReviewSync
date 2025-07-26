@@ -26,13 +26,12 @@ const Nav = ({ signedIn, roomData, setRoomData }) => {
     const handleLogout = async () => {
         try {
             const res = await axios.get('http://localhost:5000/api/auth/logout', { withCredentials: true });
-            console.log(res.data)
             if (res.status == 200) {
                 navigate("/")
                 setUser(null)
             }
         } catch (err) {
-            console.log(err)
+            toast.error("something went wrong")
         }
     }
 

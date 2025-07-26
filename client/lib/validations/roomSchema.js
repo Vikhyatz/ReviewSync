@@ -26,7 +26,6 @@ const roomSchema = yup.object().shape({
       'fileType',
       'Only .js, .py, .java, .cpp, .c, .html, .css, .json, .xml, .md files are allowed.',
       (value) => {
-        console.log(value)
         if (!value) return false;
         const extension = value.name?.split('.').pop()?.toLowerCase();
         return supported_extensions.includes(`.${extension}`);

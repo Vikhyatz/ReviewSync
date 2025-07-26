@@ -9,7 +9,6 @@ const router = express.Router()
 router.get("/getRooms/:userId", async (req, res) => {
     const userId = req.params.userId;
 
-    console.log(userId)
     const userData = await User.findById(userId).populate({
         path: "joinedRooms",
         populate: { path: "hostUser" }
@@ -26,8 +25,6 @@ router.get("/getInfo/:roomId", async (req, res) => {
 router.post("/joinRoom/:roomId/:userId", async (req, res) => {
     const roomId = req.params.roomId;
     const userId = req.params.userId;
-    console.log(roomId)
-    console.log(userId)
 
     try {
         const room = await Room.findOne({ roomId: roomId });
@@ -79,7 +76,6 @@ router.get("/checkUser/:userId/:roomId", async (req, res) => {
     const roomId = req.params.roomId;
 
     const roomData = await Room.findById(roomId);
-    console.log(roomData.joinedUsers)
 
     // check user in the joined users arr
     const check = roomData.joinedUsers.filter((users) => {
@@ -94,7 +90,6 @@ router.get("/checkUser/:userId/:roomId", async (req, res) => {
 })
 
 router.post("/saveCode", async (req, res) => {
-    console.log(req.body)
     const code = req.body.code;
     const roomId = req.body.roomId;
 
@@ -102,7 +97,9 @@ router.post("/saveCode", async (req, res) => {
         const updateCode = await Room.findByIdAndUpdate(
             roomId,
             {
-                fileText: code
+                // save to both
+                fileText: code,
+                aiReviewedCode: code
             }
         )
         res.status(200).json({ msg: "code saved successfully" })

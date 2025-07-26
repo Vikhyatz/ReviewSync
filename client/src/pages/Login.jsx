@@ -13,8 +13,6 @@ import { useAuth } from "../context/AuthContext";
 const Register = () => {
     const { setUser } = useAuth();
 
-
-    const toastss = (msg) => toast(msg)
     const navigate = useNavigate();
 
     // methods to integrate yup with RHK
@@ -28,12 +26,8 @@ const Register = () => {
     const handleLogin = async (data) => {
         const email = data.email
         const password = data.password
-        // console.log(username, password)
         try {
-            console.log(email)
-            console.log(password)
             const res = await axios.post('http://localhost:5000/api/auth/login', { email, password }, { withCredentials: true });
-            console.log(res.data)
             setUser(res.data.user)
             if (res.status == 200) {
                 navigate('/dashboard', {
@@ -42,7 +36,6 @@ const Register = () => {
             }
         } catch (err) {
             toast.error("user not registered")
-            console.log(err)
         }
 
     };

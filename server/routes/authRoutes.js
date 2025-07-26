@@ -17,7 +17,6 @@ router.post("/register", async (req, res) => {
 
 // Login
 router.post('/login', passport.authenticate('local'), (req, res) => {
-    console.log("hello there")
     res.status(200).json({ message: 'Logged in successfully', user: req.user });
 });
 
@@ -30,7 +29,6 @@ router.get('/logout', (req, res) => {
 });
 
 router.get("/me", isLoggedIn,(req, res) => {
-    console.log("this is the me route", req.user)
     res.json({ user: req.user })
 })
 

@@ -16,6 +16,7 @@ import { io } from "socket.io-client"
 import { MdEdit } from "react-icons/md";
 import { FaMagic } from 'react-icons/fa';
 import { ChatModal } from '../components/ChatModal';
+import { toast } from 'react-toastify';
 
 export const Room = ({ setRoomData }) => {
   const { user, loading } = useAuth();
@@ -45,11 +46,9 @@ export const Room = ({ setRoomData }) => {
     const userVerification = async () => {
       try {
         const res = await axios(`http://localhost:5000/api/rooms/checkUser/${user._id}/${roomId}`)
-        console.log(res.data)
         setAuthorized(true)
-        // if(res.status == 401) return <AccessDenied />
       } catch (err) {
-        console.log("it is unauthorized")
+        console.log("unauthorized")
         setAuthorized(false)
 
       }
@@ -66,7 +65,7 @@ export const Room = ({ setRoomData }) => {
     setSocket(newSocket);
 
     newSocket.on('connect', () => {
-      console.log('Connected to server:', newSocket.id);
+      // user connects
     });
 
     newSocket.on('codeChanged', (roomName, data) => {
@@ -79,11 +78,11 @@ export const Room = ({ setRoomData }) => {
 
     // join room
     newSocket.on("joinedRoom", (roomName) => {
-      console.log("sent roomName from the client", roomName)
+      // roomname sent to the server from the client
     })
 
     newSocket.on('disconnect', () => {
-      console.log('Disconnected from server');
+      // user disconnects
     });
 
     return () => {
@@ -95,7 +94,6 @@ export const Room = ({ setRoomData }) => {
     const fetchRoomDeets = async () => {
       try {
         const res = await axios.get(`http://localhost:5000/api/rooms/getInfo/${roomId}`)
-        console.log(res.data)
 
         setDeets(res.data.roomData)
         // state for dynamic nav
@@ -104,7 +102,7 @@ export const Room = ({ setRoomData }) => {
         setCode(res.data.aiReviewedCode)
 
       } catch (err) {
-        console.log(err)
+        toast.error("error fetching rooms, try again")
       }
     }
     fetchRoomDeets();
@@ -112,7 +110,6 @@ export const Room = ({ setRoomData }) => {
 
   useEffect(() => {
     if (socket && deets) {
-      console.log("in here")
       // join room
       socket.emit("joinedRoom", deets.roomId);
     }
@@ -155,17 +152,12 @@ export const Room = ({ setRoomData }) => {
         code: value,
         roomId: roomId,
       })
-      console.log(res.data)
 
     } catch (err) {
-      console.log(err)
+      toast.error("not able to update the code")
     }
     setSaveLoading(false)
   }
-
-  // setInterval(() => {
-  //   console.log(code)
-  // }, 1000);
 
   if (loading) return <Loader />;
   if (!user) return <AccessDenied />;
@@ -173,7 +165,6 @@ export const Room = ({ setRoomData }) => {
   if (!authorized) return <AccessDenied />;
   return (
     <>
-    {/* <ChatModal isOpen={chat} onClose={setChat} code={code}/> */}
     {chat && code !== undefined && (
   <ChatModal isOpen={chat} onClose={setChat} code={code} />
 )}

@@ -35,7 +35,6 @@ router.post("/", upload.single('file'), (req, res, next) => {
 
     // extract the text from the file
     const file = req.file;
-    console.log(file.mimetype)
 
     if (!file) {
         const error = new Error("Please upload a file");
@@ -107,7 +106,6 @@ Respond strictly in the format told above just the code nothing else.
             console.error('Error deleting file:', err);
             return;
         }
-        console.log('File deleted successfully');
     });
 
 
