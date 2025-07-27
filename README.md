@@ -1,5 +1,7 @@
 # ReviewSync
 
+> ⚠️ **Warning:** The ReviewSync platform uses WebSockets for real-time code editing. And the live link is deployed on [Render](https://render.com), be aware that Render does **not** support WebSockets. This may cause real-time features to not work as expected.
+
 ReviewSync is a code review platform designed to streamline and manage code review processes efficiently. It features a client-server architecture for seamless collaboration.
 
 ## How to Run
