@@ -35,7 +35,7 @@ export const RoomCard = ({ room, user, updateRooms }) => {
 
     const handleRemove = async (roomId) => {
         try{
-            const res = await axios.post(`http://localhost:5000/api/rooms/removeRoom/${roomId}/${user._id}`);
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/rooms/removeRoom/${roomId}/${user._id}`);
             if(res.status == 200){
                 toast.success("room left successfully!")
                 updateRooms();

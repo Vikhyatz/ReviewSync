@@ -8,7 +8,7 @@ export const JoinRoom = ({user, updateRooms}) => {
     const handleJoin = async (e) => {
         e.preventDefault();
         try{
-            const res = await axios.post(`http://localhost:5000/api/rooms/joinRoom/${roomId}/${user._id}`);
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/rooms/joinRoom/${roomId}/${user._id}`);
             if(res.status == 200){
                 toast.success("joined the room successfully");
                 updateRooms()

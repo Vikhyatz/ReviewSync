@@ -21,7 +21,7 @@ export const ChatModal = ({ isOpen, onClose, code }) => {
         ref.current.value = "";
 
         try {
-            const res = await axios.get(`http://localhost:5000/api/rooms/AiMsg`, {
+            const res = await axios.get(`${import.meta.env.import.meta.env.VITE_BACKEND_URL}/api/rooms/AiMsg`, {
                 params: {
                     code: code,
                     query: value

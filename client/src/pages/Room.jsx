@@ -45,7 +45,7 @@ export const Room = ({ setRoomData }) => {
   useEffect(() => {
     const userVerification = async () => {
       try {
-        const res = await axios(`http://localhost:5000/api/rooms/checkUser/${user._id}/${roomId}`)
+        const res = await axios(`${import.meta.env.VITE_BACKEND_URL}/api/rooms/checkUser/${user._id}/${roomId}`)
         setAuthorized(true)
       } catch (err) {
         console.log("unauthorized")
@@ -93,7 +93,7 @@ export const Room = ({ setRoomData }) => {
   useEffect(() => {
     const fetchRoomDeets = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/rooms/getInfo/${roomId}`)
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/rooms/getInfo/${roomId}`)
 
         setDeets(res.data.roomData)
         // state for dynamic nav
@@ -148,7 +148,7 @@ export const Room = ({ setRoomData }) => {
     const value = modifiedModelRef.current.getValue();
 
     try {
-      const res = await axios.post(`http://localhost:5000/api/rooms/saveCode`, {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/rooms/saveCode`, {
         code: value,
         roomId: roomId,
       })

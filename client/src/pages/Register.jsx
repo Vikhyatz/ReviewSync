@@ -28,7 +28,7 @@ const Register = () => {
         const password = data.password;
         const email = data.email
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/register', { username, email, password }, { withCredentials: true });
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, { username, email, password }, { withCredentials: true });
             if (res.status == 200) {
                 toast("use registered successfully, now you can login!")
                 navigate('/login')

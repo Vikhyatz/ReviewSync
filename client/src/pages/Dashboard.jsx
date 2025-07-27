@@ -19,7 +19,7 @@ const Dashboard = () => {
     const handleRoomsFetch = async () => {
         const userId = user._id
         try {
-            const res = await axios.get(`http://localhost:5000/api/rooms/getRooms/${userId}`)
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/rooms/getRooms/${userId}`)
             setRooms(res.data.rooms)
         } catch (err) {
         }
